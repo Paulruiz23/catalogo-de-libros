@@ -2,8 +2,10 @@ package com.alura.literalura.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.stereotype.Service;
 
-public class ConvierteDatos {
+@Service
+public class ConvierteDatos implements IConvierteDatos {
     private ObjectMapper objectMapper = new ObjectMapper();
 
     public <T> T obtenerDatos(String json, Class<T> clase) {

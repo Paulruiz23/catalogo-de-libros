@@ -2,6 +2,9 @@ package com.alura.literalura.model;
 
 import jakarta.persistence.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Table(name = "autores")
 public class Autor {
@@ -14,6 +17,9 @@ public class Autor {
     private Integer nacimiento;
     private Integer fallecimiento;
 
+    @OneToMany(mappedBy = "autor", fetch = FetchType.LAZY)
+    private List<Libro> libros = new ArrayList<>();
+
     public Autor() {}
 
     public Autor(DatosAutor datos) {
@@ -22,19 +28,37 @@ public class Autor {
         this.fallecimiento = datos.deathYear();
     }
 
-    public Long getId() {
-        return id;
+
+    public List<Libro> getLibros() {
+        return libros;
     }
 
     public String getNombre() {
         return nombre;
     }
 
-    public Integer getNacimiento() {
-        return nacimiento;
+    //Modifica TOSTRING
+    @Override
+    public String toString() {
+        String librosStr = libros.isEmpty() ? "No tiene libros registrados" :
+                libros.stream()
+                        .map(Libro::getTitulo)
+                        .reduce((a, b) -> a + ", " + b)
+                        .orElse("");
+
+        return """
+           --------------------------------------
+           Nombre       : %s
+           Nacimiento   : %s
+           Fallecimiento: %s
+           Libros       : %s
+           --------------------------------------
+           """.formatted(
+                nombre,
+                nacimiento != null ? nacimiento : "Desconocido",
+                fallecimiento != null ? fallecimiento : "El autor se encuentra vivo",
+                librosStr
+        );
     }
 
-    public Integer getFallecimiento() {
-        return fallecimiento;
-    }
 }

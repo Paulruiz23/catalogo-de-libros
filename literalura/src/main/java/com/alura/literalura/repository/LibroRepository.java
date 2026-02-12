@@ -3,16 +3,22 @@ package com.alura.literalura.repository;
 import com.alura.literalura.model.Autor;
 import com.alura.literalura.model.Libro;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface LibroRepository extends JpaRepository<Libro, Long> {
 
-    Libro findByTituloAndAutor(String titulo, Autor autor);
+    // Buscar libro por título y autor si hay autor
+    Optional<Libro> findFirstByTituloIgnoreCaseAndAutor(String titulo, Autor autor);
 
-    // Devuelve todos los libros de un idioma específico
-    List<Libro> findByIdioma(String idioma);
+    // Buscar libro por título solo (para libros sin autor)
+    Optional<Libro> findFirstByTituloIgnoreCase(String titulo);
 
-    // Devuelve la cantidad de libros de un idioma
-    int countByIdioma(String idioma);
+    // Devuelve todos los libros que contienen un idioma específico
+    @Query("SELECT l FROM Libro l WHERE :idioma MEMBER OF l.idiomas")
+    List<Libro> findByIdioma(@Param("idioma") String idioma);
+
 }

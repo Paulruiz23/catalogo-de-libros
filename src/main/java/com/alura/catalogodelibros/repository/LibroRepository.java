@@ -1,7 +1,7 @@
-package com.alura.literalura.repository;
+package com.alura.catalogodelibros.repository;
 
-import com.alura.literalura.model.Autor;
-import com.alura.literalura.model.Libro;
+import com.alura.catalogodelibros.model.Autor;
+import com.alura.catalogodelibros.model.Libro;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

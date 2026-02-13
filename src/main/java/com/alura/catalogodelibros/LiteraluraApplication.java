@@ -1,6 +1,6 @@
-package com.alura.literalura;
+package com.alura.catalogodelibros;
 
-import com.alura.literalura.principal.Principal;
+import com.alura.catalogodelibros.principal.Principal;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

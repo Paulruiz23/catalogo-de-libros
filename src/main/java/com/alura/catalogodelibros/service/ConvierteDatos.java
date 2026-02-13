@@ -1,4 +1,4 @@
-package com.alura.literalura.service;
+package com.alura.catalogodelibros.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;

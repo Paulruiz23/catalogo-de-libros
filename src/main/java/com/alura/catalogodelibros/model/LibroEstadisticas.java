@@ -1,4 +1,4 @@
-package com.alura.literalura.model;
+package com.alura.catalogodelibros.model;
 
 import java.util.IntSummaryStatistics;
 

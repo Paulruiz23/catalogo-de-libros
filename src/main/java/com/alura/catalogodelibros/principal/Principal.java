@@ -1,11 +1,10 @@
-package com.alura.literalura.principal;
+package com.alura.catalogodelibros.principal;
 
-import com.alura.literalura.model.*;
-import com.alura.literalura.repository.AutorRepository;
-import com.alura.literalura.repository.LibroRepository;
-import com.alura.literalura.service.ConsumoAPI;
-import com.alura.literalura.service.ConvierteDatos;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.alura.catalogodelibros.model.*;
+import com.alura.catalogodelibros.repository.AutorRepository;
+import com.alura.catalogodelibros.repository.LibroRepository;
+import com.alura.catalogodelibros.service.ConsumoAPI;
+import com.alura.catalogodelibros.service.ConvierteDatos;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
@@ -20,7 +19,6 @@ public class Principal {
     public Principal(AutorRepository autorRepository, LibroRepository libroRepository, ConvierteDatos conversor) {
         this.autorRepository = autorRepository;
         this.libroRepository = libroRepository;
-
         this.conversor = conversor;
     }
 
@@ -37,6 +35,7 @@ public class Principal {
         4 - Listar libros por idioma
         5 - Listar Autores Vivos
         6 - Estadísticas de libros
+        7 - Buscar autor por nombre
         0 - Salir
         """);
 
@@ -54,13 +53,35 @@ public class Principal {
                 case 4 -> listarLibrosPorIdioma(teclado);
                 case 5 -> listarAutoresVivos(teclado);
                 case 6 -> mostrarEstadisticasLibros();
+                case 7 -> buscarAutorPorNombre(teclado);
                 case 0 -> System.out.println("Cerrando aplicación...");
                 default -> System.out.println("Opción inválida");
             }
         }
     }
 
-    //  Buscar libro en API y guardar en BD evitando duplicados
+    // Buscar autor por nombre en la base de datos
+    private void buscarAutorPorNombre(Scanner teclado) {
+        System.out.println("Escribe el nombre del autor que deseas buscar:");
+        String nombre = teclado.nextLine().trim();
+
+        if (nombre.isEmpty()) {
+            System.out.println("El nombre no puede estar vacío.");
+            return;
+        }
+
+        List<Autor> autoresEncontrados = autorRepository.findByNombreContainingIgnoreCase(nombre);
+
+        if (autoresEncontrados.isEmpty()) {
+            System.out.println("No se encontraron autores con el nombre: " + nombre);
+            return;
+        }
+
+        System.out.println("\n=== Autores encontrados: " + autoresEncontrados.size() + " ===\n");
+        autoresEncontrados.forEach(System.out::println);
+    }
+
+    // Resto de métodos existentes...
     private void buscarLibro(Scanner teclado) {
         System.out.println("Escribe el nombre del libro:");
         String titulo = teclado.nextLine();
@@ -72,7 +93,6 @@ public class Principal {
             String json = consumo.obtenerDatos(url);
 
             DatosRespuesta datos = conversor.obtenerDatos(json, DatosRespuesta.class);
-
 
             if (datos.results().isEmpty()) {
                 System.out.println("No se encontraron resultados.");
@@ -89,7 +109,7 @@ public class Principal {
                         .orElseGet(() -> autorRepository.save(new Autor(dtoAutor)));
             }
 
-            // Verificar si el libro ya existe (título + autor o solo título)
+            // Verificar si el libro ya existe
             Optional<Libro> libroExistente;
             if (autor != null) {
                 libroExistente = libroRepository.findFirstByTituloIgnoreCaseAndAutor(datosLibro.title(), autor);
@@ -108,7 +128,6 @@ public class Principal {
 
             // Asegurar que los idiomas sean únicos
             if (libro.getIdiomas() != null) {
-                // Convertimos a HashSet para eliminar duplicados, luego de vuelta a ArrayList
                 libro.setIdiomas(new ArrayList<>(new HashSet<>(libro.getIdiomas())));
             }
 
@@ -122,8 +141,6 @@ public class Principal {
         }
     }
 
-
-    // Listar libros guardados
     private void listarLibros() {
         List<Libro> libros = libroRepository.findAll();
         if (libros.isEmpty()) {
@@ -133,17 +150,15 @@ public class Principal {
         libros.forEach(System.out::println);
     }
 
-    // Listar autores guardados
     private void listarAutores() {
-        List<Autor> autores = autorRepository.findAllWithLibros(); // <-- usar el nuevo método
+        List<Autor> autores = autorRepository.findAllWithLibros();
         if (autores.isEmpty()) {
             System.out.println("No hay autores guardados.");
             return;
         }
-        autores.forEach(System.out::println); // Ahora imprime autor + libros sin errores
+        autores.forEach(System.out::println);
     }
 
-    //lista para libros por su idioma
     private void listarLibrosPorIdioma(Scanner teclado) {
         System.out.println("Escribe el idioma a buscar (ej: en, es, fr, pt):");
         String idioma = teclado.nextLine().trim();
@@ -155,17 +170,13 @@ public class Principal {
             return;
         }
 
-        libros.forEach(System.out::println); // <<-- usa el toString() de Libro
+        libros.forEach(System.out::println);
     }
 
-
-    // Lista autores vivos en un año específico
     private void listarAutoresVivos(Scanner teclado) {
-
         System.out.println("Ingresa el año para consultar autores vivos:");
         int year;
 
-        // Validar que el usuario ingrese un número
         try {
             year = Integer.parseInt(teclado.nextLine());
         } catch (NumberFormatException e) {
@@ -184,21 +195,17 @@ public class Principal {
         autoresVivos.forEach(System.out::println);
     }
 
-    //Muestra estadísticas de descargas de todos los libros guardados
     private void mostrarEstadisticasLibros() {
         List<Libro> libros = libroRepository.findAll();
         if (libros.isEmpty()) {
             System.out.println("No hay libros guardados para generar estadísticas.");
             return;
         }
-        // Calcular estadísticas de descargas usando Streams
+
         IntSummaryStatistics stats = libros.stream()
                 .mapToInt(Libro::getDescargas)
                 .summaryStatistics();
 
         System.out.println(new LibroEstadisticas(stats));
     }
-
-
-
 }

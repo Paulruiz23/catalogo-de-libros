@@ -1,6 +1,6 @@
-package com.alura.literalura.repository;
+package com.alura.catalogodelibros.repository;
 
-import com.alura.literalura.model.Autor;
+import com.alura.catalogodelibros.model.Autor;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -19,5 +19,9 @@ public interface AutorRepository extends JpaRepository<Autor, Long> {
 
     @Query("SELECT DISTINCT a FROM Autor a LEFT JOIN FETCH a.libros")
     List<Autor> findAllWithLibros();
+
+    // Buscar autores por nombre
+    @Query("SELECT DISTINCT a FROM Autor a LEFT JOIN FETCH a.libros WHERE LOWER(a.nombre) LIKE LOWER(CONCAT('%', :nombre, '%'))")
+    List<Autor> findByNombreContainingIgnoreCase(@Param("nombre") String nombre);
 
 }

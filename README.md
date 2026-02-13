@@ -36,11 +36,11 @@ Está diseñado siguiendo buenas prácticas de desarrollo con Spring Data JPA, a
 <br>
 
 ```text
-literalura/
+catalogo-de-libros/
 │
 ├─ src/
 │   ├─ main/
-│   │   ├─ java/com/alura/literalura/
+│   │   ├─ java/com/alura/catalogodelibros/
 │   │   │   ├─ model/
 │   │   │   │   ├─ Autor.java              # Entidad JPA de autor
 │   │   │   │   ├─ Libro.java              # Entidad JPA de libro
@@ -57,9 +57,9 @@ literalura/
 │   │   │   │   └─ IConvierteDatos.java    # Interfaz del conversor
 │   │   │   ├─ principal/
 │   │   │   │   └─ Principal.java          # Menú y lógica principal
-│   │   │   └─ LiteraluraApplication.java  # Clase principal Spring Boot
+│   │   │   └─ CatlibrosApplication.java   # Clase principal Spring Boot
 │   │   └─ resources/
-│   │       └─ application.properties       # Configuración de BD
+│   │       └─ application.properties      # Configuración de BD
 │
 ├─ pom.xml
 └─ README.md

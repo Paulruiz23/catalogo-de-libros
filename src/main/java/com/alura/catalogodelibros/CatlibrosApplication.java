@@ -6,19 +6,19 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class LiteraluraApplication implements CommandLineRunner {
+public class CatlibrosApplication implements CommandLineRunner {
 
 
 
 
 	private final Principal principal;
 
-	public LiteraluraApplication(Principal principal) {
+	public CatlibrosApplication(Principal principal) {
 		this.principal = principal;
 	}
 
 	public static void main(String[] args) {
-		SpringApplication.run(LiteraluraApplication.class, args);
+		SpringApplication.run(CatlibrosApplication.class, args);
 	}
 
 	@Override
